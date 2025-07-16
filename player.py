@@ -1,0 +1,38 @@
+
+class Player:
+    def __init__(self):
+        self.position = (0, 0)  # Starting position of the player
+        self.holdings = []  # Items the player is holding
+
+    def move(self, direction):
+        """Move the player in a specified direction."""
+        x, y = self.position
+        if direction == "up":
+            self.position = (x, y - 1)
+        elif direction == "down":
+            self.position = (x, y + 1)
+        elif direction == "left":
+            self.position = (x - 1, y)
+        elif direction == "right":
+            self.position = (x + 1, y)
+        else:
+            print("Invalid direction. Use 'up', 'down', 'left', or 'right'.")
+    
+    def get_position(self):
+        """Return the current position of the player."""
+        return self.position
+    
+    def pick_item(self, item):
+        """Add an item to the player's holdings."""
+        self.holdings.append(item)
+        print(f"Picked up: {item}")
+    
+    def drop_item(self, item):
+        """Remove an item from the player's holdings."""
+        if item in self.holdings:
+            self.holdings.remove(item)
+            print(f"Dropped: {item}")
+        else:
+            print(f"Item '{item}' not found in holdings.")
+    
+    
