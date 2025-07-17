@@ -1,4 +1,4 @@
-from test_project import Layout
+from grid import Layout
 from player import Player
 from server import start_server
 

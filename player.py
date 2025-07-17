@@ -1,8 +1,10 @@
 
 class Player:
-    def __init__(self):
+    def __init__(self, max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
         self.holdings = []  # Items the player is holding
+        self.max_height = max_height
+        self.max_width = max_width
 
     def move(self, direction):
         """Move the player in a specified direction."""
@@ -17,7 +19,13 @@ class Player:
             self.position = (x + 1, y)
         else:
             print("Invalid direction. Use 'up', 'down', 'left', or 'right'.")
-    
+        
+        # Ensure the player stays within bounds
+        self.position = (
+            max(0, min(self.position[0], self.max_width - 1)),
+            max(0, min(self.position[1], self.max_height - 1))
+        )
+
     def get_position(self):
         """Return the current position of the player."""
         return self.position
