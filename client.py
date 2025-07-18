@@ -8,7 +8,7 @@ import queue
 
 key_queue = queue.Queue()   
 
-def start_client(host='localhost', port=53333):
+def start_client(host='192.168.1.81', port=53333):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((host, port))
@@ -24,7 +24,7 @@ def start_client(host='localhost', port=53333):
             if message == "quit":
                 print("Exiting client.")
                 break
-            
+
             client_socket.sendall(message.encode())
             response = client_socket.recv(1024)
             print(f"Server response: {response.decode()}")
