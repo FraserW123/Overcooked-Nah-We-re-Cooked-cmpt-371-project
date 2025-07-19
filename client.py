@@ -7,8 +7,8 @@ from grid import Layout
 import queue
 
 key_queue = queue.Queue()   
-
-def start_client(host='192.168.1.81', port=53333):
+host = 'localhost'
+def start_client(host='localhost', port=53333):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client_socket.connect((host, port))
@@ -52,7 +52,7 @@ def on_press(key):
             key_queue.put("right")
 
 def main():
-    start_client()
+    start_client(host)
 
 if __name__ == "__main__":
     main()

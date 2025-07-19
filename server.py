@@ -3,7 +3,10 @@ from grid import Layout
 from player import Player
 import threading
 
-def start_server(game_grid, host='192.168.1.81', port=53333):
+host = 'localhost'
+server_running = True
+
+def start_server(game_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(5)
@@ -12,12 +15,12 @@ def start_server(game_grid, host='192.168.1.81', port=53333):
 
 
     try:
-        while True:
+        while server_running:
             client_socket, addr = server_socket.accept()
             player = Player(addr, max_height=10, max_width=10)
             thread = threading.Thread(
                 target=handle_client, 
-                args=(client_socket, addr, player, game_grid), 
+                args=(client_socket, addr, player, game_grid, server_socket), 
                 daemon=True
             )
             thread.start()
@@ -31,7 +34,7 @@ def start_server(game_grid, host='192.168.1.81', port=53333):
 
     #handle_client(client_socket, addr, player, game_grid)
 
-def handle_client(client_socket, addr, player, game_grid):
+def handle_client(client_socket, addr, player, game_grid, server_socket=None):
     try:
         prev_position = player.get_position()
         game_grid.update_cell(prev_position[1], prev_position[0], 'P')
@@ -58,9 +61,15 @@ def handle_client(client_socket, addr, player, game_grid):
             elif data == "right":
                 #player.move("right")
                 position = (prev_position[0] + 1, prev_position[1])
+            # elif data == "p":
+            #     client_socket.sendall(b"Shutting down server.\n")
+            #     client_socket.close()
+            #     server_socket.close()  # Close server socket to unblock accept()
+                
             elif data == "quit":
                 print("Client requested to quit.")
                 break
+            
 
             # position = player.get_position()
             
@@ -86,7 +95,7 @@ def handle_client(client_socket, addr, player, game_grid):
 def main():
     game_grid = Layout(10, 10)
     
-    start_server(game_grid)
+    start_server(game_grid, host)
        
     
 
