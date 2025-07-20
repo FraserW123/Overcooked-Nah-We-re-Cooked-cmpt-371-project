@@ -2,7 +2,7 @@
 class Player:
     def __init__(self, id, max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
-        self.holdings = []  # Items the player is holding
+        self.item = None  #the items the player is holding
         self.id = id
         self.max_height = max_height
         self.max_width = max_width
@@ -44,15 +44,20 @@ class Player:
     
     def pick_item(self, item):
         """Add an item to the player's holdings."""
-        self.holdings.append(item)
-        print(f"Picked up: {item}")
-    
-    def drop_item(self, item):
-        """Remove an item from the player's holdings."""
-        if item in self.holdings:
-            self.holdings.remove(item)
-            print(f"Dropped: {item}")
+        if not self.item:
+            self.item = item
+            print(f"Picked up: {item}")
         else:
-            print(f"Item '{item}' not found in holdings.")
+            print("Unable to pick up item, hand is full")
+
+    def drop_item(self):
+        """Remove an item from the player's holdings."""
+        if self.item:
+            item = self.item
+            self.item = None
+            print("dropped off item")
+            return item
+        else:
+            print(f"Nothing to drop off.")
     
     
