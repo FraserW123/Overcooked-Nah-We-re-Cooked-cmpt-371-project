@@ -1,4 +1,5 @@
 import pygame
+import socket
 
 class Player:
     # def __init__(self, id, max_height=10, max_width=10):
@@ -17,24 +18,69 @@ class Player:
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.rect)
 
-    def move(self):
-        pygame.key.get_pressed()
+    def move(self, client_socket=None):
+        # pygame.key.get_pressed()
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            if self.position[0] - self.vel >= 0:
-                self.position = (self.position[0] - self.vel, self.position[1])
+        movement_sent = False
 
-        if keys[pygame.K_RIGHT]:
-            if self.position[0] + self.vel + self.width <= 750:
-                self.position = (self.position[0] + self.vel, self.position[1])
+        if client_socket:
+                
 
-        if keys[pygame.K_UP]:
-            if self.position[1] - self.vel >= 0:
-                self.position = (self.position[0], self.position[1] - self.vel)
+            if keys[pygame.K_LEFT]:
+                # if self.position[0] - self.vel >= 0:
+                #     self.position = (self.position[0] - self.vel, self.position[1])
+                client_socket.sendall("left".encode('utf-8'))
+                movement_sent = True
 
-        if keys[pygame.K_DOWN]:
-            if self.position[1] + self.vel + self.height <= 750:
-                self.position = (self.position[0], self.position[1] + self.vel)
+
+            if keys[pygame.K_RIGHT]:
+                # if self.position[0] + self.vel + self.width <= 750:
+                #     self.position = (self.position[0] + self.vel, self.position[1])
+                client_socket.sendall("right".encode('utf-8'))
+                movement_sent = True
+
+            if keys[pygame.K_UP]:
+                # if self.position[1] - self.vel >= 0:
+                #     self.position = (self.position[0], self.position[1] - self.vel)
+                client_socket.sendall("up".encode('utf-8'))
+                movement_sent = True
+
+            if keys[pygame.K_DOWN]:
+                # if self.position[1] + self.vel + self.height <= 750:
+                #     self.position = (self.position[0], self.position[1] + self.vel)
+                client_socket.sendall("down".encode('utf-8'))
+                movement_sent = True
+
+        if movement_sent:
+            try:
+                data = client_socket.recv(1024).decode()
+                print(f"Received from server: {data}")
+                if data == "quit":
+                    print("Server requested to quit.")
+                    pygame.quit()
+                    return
+                if data == "up":
+                    if self.position[1] - self.vel >= 0:
+                        self.position = (self.position[0], self.position[1] - self.vel)
+                        # self.rect = (self.position[0], self.position[1], self.width, self.height)
+                        movement_sent = False
+                if data == "down":
+                    if self.position[1] + self.vel + self.height <= 750:
+                        self.position = (self.position[0], self.position[1] + self.vel)
+                        # self.rect = (self.position[0], self.position[1], self.width, self.height)
+                        movement_sent = False
+                if data == "left":
+                    if self.position[0] - self.vel >= 0:
+                        self.position = (self.position[0] - self.vel, self.position[1])
+                        # self.rect = (self.position[0], self.position[1], self.width, self.height)
+                        movement_sent = False
+                if data == "right":
+                    if self.position[0] + self.vel + self.width <= 750:
+                        self.position = (self.position[0] + self.vel, self.position[1])
+                        # self.rect = (self.position[0], self.position[1], self.width, self.height)
+                        movement_sent = False
+            except:
+                pass
 
         self.rect = (self.position[0], self.position[1], self.width, self.height)
 

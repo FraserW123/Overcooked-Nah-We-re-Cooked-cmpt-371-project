@@ -94,20 +94,52 @@ server_running = True
 #         client_socket.close()
 #         print("Connection closed")
 
-def handle_client(client_socket, addr):
+def handle_client(client_socket, addr, client_id):
 
-    reply = ""
+    client_socket.sendall(str(client_id).encode())
+    
     while True:
         try:
-            data = client_socket.recv(2048)
+            
+            data = client_socket.recv(1024)
+            print(f"Received from {addr}: {data.decode()}")
+            if not data:
+                break
+            # if data.decode() == "get_pos":
+            #     position = clients[str(client_id)]
+            #     position = position.strip('()')
+            #     client_socket.sendall(position.encode())
+            if data.decode() == "up":
+            #     print(f"Client {client_id} moved up")
+            #     clients[str(client_id)] = (clients[str(client_id)][0], clients[str(client_id)][1] - 30)
+            #     new_pos = clients[str(client_id)].strip('()')
+                client_socket.sendall("up".encode())
+            if data.decode() == "down":
+            #     print(f"Client {client_id} moved down")
+            #     clients[str(client_id)] = (clients[str(client_id)][0], clients[str(client_id)][1] + 30)
+            #     new_pos = clients[str(client_id)].strip('()')
+                client_socket.sendall("down".encode())
+            if data.decode() == "left":
+            #     print(f"Client {client_id} moved left")
+            #     clients[str(client_id)] = (clients[str(client_id)][0] - 30, clients[str(client_id)][1])
+            #     new_pos = clients[str(client_id)].strip('()')
+                client_socket.sendall("left".encode())
+            if data.decode() == "right":
+            #     print(f"Client {client_id} moved right")
+            #     clients[str(client_id)] = (clients[str(client_id)][0] + 30, clients[str(client_id)][1])
+            #     new_pos = clients[str(client_id)].strip('()')
+                client_socket.sendall("right".encode())
+
         except socket.error as e:
             print(f"Socket error: {e}")
             break
 
 
 def main():
-    # game_grid = Layout(10, 10)
     
+    pos = [(0,0)]
+    client_id = 0
+
     # start_server(game_grid, host)
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -118,6 +150,7 @@ def main():
         # sys.exit(1)
        
     server_socket.listen(5)
+    # server_socket.settimeout(1.0)  # Set timeout to 1 second
     print(f"Server started on {host}:{port}")
 
     while True:
@@ -125,10 +158,12 @@ def main():
             connection, address = server_socket.accept()
             print(f"Connection from {address} has been established.")
 
-            threading.Thread(target=handle_client, args=(connection, address)).start()
+            threading.Thread(target=handle_client, args=(connection, address, client_id)).start()
+            client_id += 1
 
         except KeyboardInterrupt:
             print("\n[!] Shutting down server...")
+
         finally:
             server_socket.close()
             print("[+] Server socket closed.")
