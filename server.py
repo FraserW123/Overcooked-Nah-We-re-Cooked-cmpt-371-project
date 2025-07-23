@@ -2,9 +2,12 @@ import socket
 from grid import Layout
 from player import Player
 import threading
+import json
 
 host = 'localhost'
 server_running = True
+GRID_HEIGHT = 10
+GRID_WIDTH = 10
 
 def start_server(game_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -79,13 +82,15 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
                 game_grid.update_cell(position[1], position[0], 'P' )
                 prev_position = position
                 game_grid.display()
+            
                 print(f"Player position: {position}")
             
 
             
 
             response = "Message received"
-            client_socket.sendall(response.encode())
+            grid_state = json.dumps(game_grid.get_grid())
+            client_socket.sendall(grid_state.encode())
     except Exception as e:
         print(f"Error: {e}")
     finally:
@@ -93,7 +98,7 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
         print("Connection closed")
 
 def main():
-    game_grid = Layout(10, 10)
+    game_grid = Layout(GRID_HEIGHT, GRID_WIDTH)
     
     start_server(game_grid, host)
        

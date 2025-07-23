@@ -25,6 +25,11 @@ class Layout:
         self.grid = [[fill for _ in range(self.height)] for _ in range (self.width)]
 
 
+    def get_grid(self):
+        """Return the current grid."""
+        return self.grid
+
+
 
     def get_cell(self, row, col):
         """Get the value at a specific cell."""
