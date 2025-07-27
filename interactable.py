@@ -1,6 +1,19 @@
 
 from player import Player
 
+
+def initialize_interactable_grid(grid):
+    height = len(grid)
+    width = len(grid[0])
+    interactable_grid = []
+    for i in range(height):
+        row = [None] * width
+        interactable_grid.append(row)
+    for row in range(height):
+        for col in range(width):
+            if grid[row][col][0] == 'T':
+                interactable_grid[row][col] = Interactable(col,row,items=grid[row][col][1:])
+
 class Interactable:
 # the super class of stations,
 

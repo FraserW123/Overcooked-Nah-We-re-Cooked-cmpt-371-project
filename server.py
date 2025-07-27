@@ -20,6 +20,9 @@ def get_layout_from_file(file_name):
         grid_matrix.append(row_list)
     return grid_matrix
 
+
+
+
 def start_server(game_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))

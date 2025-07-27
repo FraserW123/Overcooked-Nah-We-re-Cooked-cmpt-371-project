@@ -46,7 +46,18 @@ class Player:
             self.position = position
         else:
             print("Position out of bounds.")
-    
+    def get_looking_position(self):
+        #getting the position that the player is looking at
+        x, y = self.position
+        direction = self.direction
+        if direction == "U":
+            return (x, y - 1)
+        elif direction == "D":
+            return (x, y + 1)
+        elif direction == "L":
+            return (x-1, y)
+        elif direction == "R":
+            return (x+1, y)
     def pick_item(self, item):
         """Add an item to the player's holdings."""
         if not self.item:
