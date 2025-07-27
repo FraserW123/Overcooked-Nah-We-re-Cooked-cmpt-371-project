@@ -108,6 +108,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
 
             # position = player.get_position()
             player_str = "P" + player.direction
+            if player.item:
+                player_str += player.item
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')

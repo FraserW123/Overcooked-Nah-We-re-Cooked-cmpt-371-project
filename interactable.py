@@ -13,6 +13,12 @@ def initialize_interactable_grid(grid):
         for col in range(width):
             if grid[row][col][0] == 'T':
                 interactable_grid[row][col] = Interactable(col,row,items=list(grid[row][col][1:]))
+            elif grid[row][col][0] == 'G':
+                #G standing for garbage bin
+                interactable_grid[row][col] = garbage_bin(col,row)
+            elif grid[row][col][0] == 'I':
+                #I for ingredient bin
+                interactable_grid[row][col] = ingredient_bin(col,row, items = [grid[row][col][1]])
     return interactable_grid
 
 class Interactable:
@@ -48,17 +54,15 @@ class Interactable:
 class garbage_bin(Interactable):
     def pick_up_item(self):
         print("unable to pick up item")
-    def drop_off_item(self,new_item):
+    def put_down_item(self,new_item):
         pass
 
 
 class ingredient_bin(Interactable):
-    def __init__(self, x, y, item):
-        super().__init__(x, y, item[:1])
-
-    def pick_up(self, player: Player):
-        pass
-    def drop_off_item(self,new_item):
+    def pick_up_item(self):
+        item = self.items[-1]
+        return item
+    def put_down_item(self,new_item):
         print("unable to pick up item")
 
 
