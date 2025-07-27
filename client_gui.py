@@ -15,6 +15,24 @@ def draw_letter(letter,screen,rectangle, bg_color, font = None):
     text_rect = text.get_rect(center=rectangle.center)
     screen.blit(text, text_rect)
 
+def draw_player(dir, screen, rectangle, bg_color, font = None):
+    text_char = '>'
+    if dir == "U":
+        text_char = '^'
+    elif dir == "R":
+        text_char = '>'
+    elif dir == "L":
+        text_char = '<'
+    elif dir == "D":
+        text_char = 'V'
+    # draw a certain letter on top of a defined rectangle
+    pygame.draw.rect(screen, bg_color, rectangle)
+    # a font that is 4 pixels smaller than the cell
+    font = pygame.font.SysFont(font, CELL_SIZE - 4)
+    #a black letter of the given font
+    text = font.render(text_char, True, (0, 0, 0))
+    text_rect = text.get_rect(center=rectangle.center)
+    screen.blit(text, text_rect)
 
 # === CONFIGURATION ===
 CELL_SIZE = 40
@@ -78,8 +96,9 @@ def start_client_gui():
                 rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
 
                 # Draw filled cells
-                if value == 'P':
-                    pygame.draw.rect(screen, (0, 100, 255), rect)  # Player
+                if value[0] == "P":
+                    dir = value[1]
+                    draw_player(dir,screen,rect,(0, 100, 255))
                 elif value == 'T':
                     draw_letter('T',screen,rect, (200,200,200))
                 else:

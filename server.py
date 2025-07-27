@@ -40,7 +40,7 @@ def start_server(game_grid, host='localhost', port=53333):
 def handle_client(client_socket, addr, player, game_grid, server_socket=None):
     try:
         prev_position = player.get_position()
-        game_grid.update_cell(prev_position[1], prev_position[0], 'P')
+        game_grid.update_cell(prev_position[1], prev_position[0], "PR")
         game_grid.display()
         
         while True:
@@ -83,7 +83,8 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')
-                game_grid.update_cell(position[1], position[0], 'P' )
+                player_str = "P"+player.direction
+                game_grid.update_cell(position[1], position[0], player_str)
                 prev_position = position
                 game_grid.display()
             

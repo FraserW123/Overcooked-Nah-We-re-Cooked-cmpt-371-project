@@ -14,10 +14,10 @@ class Layout:
             print(" ".join(row))
         print()
 
-    def update_cell(self, row, col, char="."):
+    def update_cell(self, row, col, string="."):
         """Update the character at a specific cell."""
-        if 0 <= row < self.height and 0 <= col < self.width and len(char) == 1:
-            self.grid[row][col] = char
+        if 0 <= row < self.height and 0 <= col < self.width:
+            self.grid[row][col] = string
             return True
         return False
     
