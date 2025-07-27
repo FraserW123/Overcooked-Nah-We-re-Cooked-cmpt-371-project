@@ -5,6 +5,19 @@ import queue
 from grid import Layout  # your existing grid class
 import json
 
+def draw_letter(letter,screen,rectangle, font = None):
+    # draw a certain letter on top of a defined rectangle
+    pygame.draw.rect(screen, (200, 200, 200), rectangle)
+    # a font that is 4 pixels smaller than the cell
+    font = pygame.font.SysFont(font, CELL_SIZE - 4)
+    #a black letter of the given font
+    text = font.render(letter, True, (0, 0, 0))
+    text_rect = text.get_rect(center=rectangle.center)
+    screen.blit(text, text_rect)
+
+
+
+
 # === CONFIGURATION ===
 CELL_SIZE = 40
 GRID_WIDTH = 10
@@ -68,8 +81,13 @@ def start_client_gui():
 
                 # Draw filled cells
                 if value == 'P':
+                    #drawing a blue rectangle for player
                     pygame.draw.rect(screen, (0, 100, 255), rect)  # Player
+                elif value == 'T':
+                    #draw a black T for a table
+                    draw_letter('T',screen,rect)
                 else:
+                    #drawing a white rectangle for floor
                     pygame.draw.rect(screen, (200, 200, 200), rect)  # Empty
 
                 pygame.draw.rect(screen, (0, 0, 0), rect, 1)  # Border

@@ -51,19 +51,26 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
             print(f"Received: {data}")
 
             position = (prev_position[0], prev_position[1])  # Default position
-
+            direction = 'R' #Default Direction
             if data == "up":
                 #player.move("up")
                 position = (prev_position[0], prev_position[1] - 1)
+                direction = 'U'
             elif data == "down":
                 #player.move("down")
                 position = (prev_position[0], prev_position[1] + 1)
+                direction = 'D'
             elif data == "left":
                 #player.move("left")
                 position = (prev_position[0] - 1, prev_position[1])
+                direction = 'L'
             elif data == "right":
                 #player.move("right")
                 position = (prev_position[0] + 1, prev_position[1])
+                direction = 'R'
+            elif data == "inter_item":
+                #interact with item: when player's inventory is empty, attempt pickup, otherwise, drop off.
+                break
             # elif data == "p":
             #     client_socket.sendall(b"Shutting down server.\n")
             #     client_socket.close()
@@ -78,6 +85,7 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
             
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
+                player.set_direction(direction)
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')
                 game_grid.update_cell(position[1], position[0], 'P' )
                 prev_position = position
