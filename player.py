@@ -2,7 +2,6 @@
 class Player:
     def __init__(self, id, max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
-        self.direction = "R"
         self.item = None  #the items the player is holding
         self.id = id
         self.max_height = max_height
@@ -42,8 +41,6 @@ class Player:
             self.position = position
         else:
             print("Position out of bounds.")
-    def set_direction(self,direction):
-        self.direction = direction
     
     def pick_item(self, item):
         """Add an item to the player's holdings."""
