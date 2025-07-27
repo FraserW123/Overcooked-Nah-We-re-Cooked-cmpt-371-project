@@ -61,9 +61,8 @@ class Player:
     def interact(self, interactable):
         if self.item and not (len(interactable.items)>=interactable.max_items):
             #player has an item and the interactable have an empty spot
-            self.item = interactable.pick_up_item()
+            interactable.put_down_item(self.item)
+            self.item=None
         elif not self.item and (len(interactable.items)> 0):
             #player is not holding an item, and the interactable does have one
-            interactable.drop_off_item(self.item)
-            self.item = None
-    
+            self.item = interactable.pick_up_item()

@@ -66,7 +66,6 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
             print(f"Received: {data}")
 
             position = (prev_position[0], prev_position[1])  # Default position
-
             if data == "up":
                 #player.move("up")
                 position = (prev_position[0], prev_position[1] - 1)
@@ -88,8 +87,12 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
                 looking_x,looking_y = player.get_looking_position()
                 looking_interactable = interactable_grid[looking_y][looking_x]
                 if looking_interactable:
+                    print(player.item)
+                    print(looking_interactable.items)
                     player.interact(looking_interactable)
-
+                    print("\n")
+                    print(player.item)
+                    print(looking_interactable.items)
             elif data == "operate":
                 #operate to cook an item
                 pass

@@ -12,7 +12,8 @@ def initialize_interactable_grid(grid):
     for row in range(height):
         for col in range(width):
             if grid[row][col][0] == 'T':
-                interactable_grid[row][col] = Interactable(col,row,items=grid[row][col][1:])
+                interactable_grid[row][col] = Interactable(col,row,items=list(grid[row][col][1:]))
+    return interactable_grid
 
 class Interactable:
 # the super class of stations,
@@ -28,7 +29,7 @@ class Interactable:
         else:
             self.items = items[:max_items]
 
-    def drop_off_item(self,new_item):
+    def put_down_item(self,new_item):
         holding = len(self.items)
         if holding< self.max_items:
             self.items.append(new_item)

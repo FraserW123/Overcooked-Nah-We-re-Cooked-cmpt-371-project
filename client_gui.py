@@ -29,8 +29,8 @@ def draw_player(dir, screen, rectangle, bg_color, font = None):
         text_char = 'V'
     # draw a certain letter on top of a defined rectangle
     pygame.draw.rect(screen, bg_color, rectangle)
-    # a font that is 4 pixels smaller than the cell
-    font = pygame.font.SysFont(font, CELL_SIZE - 4)
+    # a font that is 2 pixels smaller than the cell
+    font = pygame.font.SysFont(font, CELL_SIZE - 2)
     #a black letter of the given font
     text = font.render(text_char, True, (0, 0, 0))
     text_rect = text.get_rect(center=rectangle.center)
@@ -86,6 +86,7 @@ def start_client_gui():
     running = True
     move_delay = 100  # milliseconds between moves
     last_move_time = pygame.time.get_ticks()
+    interact_cd = 0
     while running:
         screen.fill((255, 255, 255))  # White background
 
@@ -138,14 +139,18 @@ def start_client_gui():
             elif keys[pygame.K_RIGHT]:
                 key_queue.put("right")
                 last_move_time = now
+            elif keys[pygame.K_SPACE]:
+                if interact_cd == 0:
+                    key_queue.put("interact")
+                    interact_cd += 8
             elif keys[pygame.K_LSHIFT]:
                 move_delay = 20  # Speed up movement
             else:
                 move_delay = 100
 
-
         clock.tick(60)
-
+        if interact_cd>0:
+            interact_cd -= 1
     pygame.quit()
 
 if __name__ == "__main__":
