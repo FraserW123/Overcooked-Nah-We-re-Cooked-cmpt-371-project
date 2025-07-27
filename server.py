@@ -55,6 +55,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
 def handle_client(client_socket, addr, player, game_grid, interactable_grid, server_socket=None):
     try:
         prev_position = player.get_position()
+        prev_inventory = player.item
         game_grid.update_cell(prev_position[1], prev_position[0], "PR")
         game_grid.display()
         
@@ -87,12 +88,10 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
                 looking_x,looking_y = player.get_looking_position()
                 looking_interactable = interactable_grid[looking_y][looking_x]
                 if looking_interactable:
-                    print(player.item)
-                    print(looking_interactable.items)
                     player.interact(looking_interactable)
-                    print("\n")
-                    print(player.item)
-                    print(looking_interactable.items)
+                    item_str = "".join(looking_interactable.items)
+                    cell_string = game_grid.get_grid()[looking_y][looking_x][0]+item_str
+                    game_grid.update_cell(looking_y,looking_x,cell_string)
             elif data == "operate":
                 #operate to cook an item
                 pass

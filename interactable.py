@@ -63,7 +63,7 @@ class ingredient_bin(Interactable):
         item = self.items[-1]
         return item
     def put_down_item(self,new_item):
-        print("unable to pick up item")
+        pass
 
 
 
