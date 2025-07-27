@@ -55,15 +55,19 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
             if data == "up":
                 #player.move("up")
                 position = (prev_position[0], prev_position[1] - 1)
+                player.direction = 'U'
             elif data == "down":
                 #player.move("down")
                 position = (prev_position[0], prev_position[1] + 1)
+                player.direction = 'D'
             elif data == "left":
                 #player.move("left")
                 position = (prev_position[0] - 1, prev_position[1])
+                player.direction = 'L'
             elif data == "right":
                 #player.move("right")
                 position = (prev_position[0] + 1, prev_position[1])
+                player.direction = 'R'
             # elif data == "p":
             #     client_socket.sendall(b"Shutting down server.\n")
             #     client_socket.close()

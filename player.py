@@ -2,6 +2,7 @@
 class Player:
     def __init__(self, id, max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
+        self.direction = 'R' #starting direction of the player, facing right
         self.item = None  #the items the player is holding
         self.id = id
         self.max_height = max_height
@@ -12,12 +13,16 @@ class Player:
         x, y = self.position
         if direction == "up":
             self.position = (x, y - 1)
+            self.direction = 'U'
         elif direction == "down":
             self.position = (x, y + 1)
+            self.direction = 'D'
         elif direction == "left":
             self.position = (x - 1, y)
+            self.direction = 'L'
         elif direction == "right":
             self.position = (x + 1, y)
+            self.direction = 'R'
         else:
             print("Invalid direction. Use 'up', 'down', 'left', or 'right'.")
         
