@@ -3,7 +3,7 @@ from player import Player
 from server import start_server
 
 def main():
-    game_grid = Layout(3, 3)
+    game_grid = Layout(height=3,width= 3)
     print("Initial grid:")
     game_grid.display()
     player = Player()

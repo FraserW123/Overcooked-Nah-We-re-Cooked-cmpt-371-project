@@ -4,6 +4,8 @@ import threading
 import queue
 from grid import Layout  # your existing grid class
 import json
+from server import get_layout_from_file
+
 
 def draw_letter(letter,screen,rectangle, bg_color, font = None):
     # draw a certain letter on top of a defined rectangle
@@ -47,7 +49,7 @@ port = 53333
 key_queue = queue.Queue()
 
 # === Setup Layout for local rendering ===
-local_grid = Layout(GRID_HEIGHT, GRID_WIDTH)
+local_grid = Layout(layout=get_layout_from_file("grid.txt"))
 
 # === Networking Thread ===
 def network_thread(client_socket):

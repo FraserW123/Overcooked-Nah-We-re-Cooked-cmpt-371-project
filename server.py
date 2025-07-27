@@ -9,6 +9,17 @@ server_running = True
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
 
+def get_layout_from_file(file_name):
+    with open(file_name, 'r') as f:
+        grid_string = f.read()
+    grid_list = grid_string.split("\n")
+    grid_matrix = []
+    for row in grid_list:
+        row_list = row.split(" ")
+        row_list = list(filter(None, row_list))
+        grid_matrix.append(row_list)
+    return grid_matrix
+
 def start_server(game_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
@@ -105,8 +116,9 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
         print("Connection closed")
 
 def main():
-    game_grid = Layout(GRID_HEIGHT, GRID_WIDTH)
-    
+    grid_matrix = get_layout_from_file("grid.txt")
+    game_grid = Layout(layout = grid_matrix)
+
     start_server(game_grid, host)
        
     

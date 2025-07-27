@@ -1,14 +1,16 @@
 
 
-
 class Layout:
 
-    def __init__(self, height, width, fill="."):
-        self.width = width
-        self.height = height
-        self.grid = [[fill for _ in range(height)] for _ in range (width)]
-        self.grid[1][1] = 'T'
-
+    def __init__(self, layout=None, height = None, width = None, fill="."):
+        if height and width:
+            self.width = width
+            self.height = height
+            self.grid = [[fill for _ in range(height)] for _ in range (width)]
+        elif layout:
+            self.grid = layout
+            self.width = len(layout[0])
+            self.height = len(layout)
     def display(self):
         for row in self.grid:
             print(" ".join(row))
