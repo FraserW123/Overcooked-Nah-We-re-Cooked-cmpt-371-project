@@ -28,30 +28,37 @@ class Interactable:
         else:
             self.items = items[:max_items]
 
-    def pick_up(self, player: Player):
-        if 0< len(self.items):
-            player.pick_item(self.items[-1])
-            self.items.pop()
-
-    def drop_off(self,player:Player):
-        if len(self.items)<self.max_items:
-            item = player.drop_item()
-            if item:
-                self.items.append(item)
+    def drop_off_item(self,new_item):
+        holding = len(self.items)
+        if holding< self.max_items:
+            self.items.append(new_item)
         else:
-            print("full counter")
+            print("unable to drop off item")
 
+    def pick_up_item(self):
+        holding = len(self.items)
+        if holding>0:
+            item= self.items[-1]
+            self.items.pop()
+            return item
+        else:
+            print("unable to pick up item")
 
 class garbage_bin(Interactable):
-    def drop_off(self,player:Player):
-        _=player.drop_item()
+    def pick_up_item(self):
+        print("unable to pick up item")
+    def drop_off_item(self,new_item):
+        pass
+
 
 class ingredient_bin(Interactable):
     def __init__(self, x, y, item):
         super().__init__(x, y, item[:1])
 
     def pick_up(self, player: Player):
-        player.pick_item(self.items[0])
+        pass
+    def drop_off_item(self,new_item):
+        print("unable to pick up item")
 
 
 

@@ -58,22 +58,12 @@ class Player:
             return (x-1, y)
         elif direction == "R":
             return (x+1, y)
-    def pick_item(self, item):
-        """Add an item to the player's holdings."""
-        if not self.item:
-            self.item = item
-            print(f"Picked up: {item}")
-        else:
-            print("Unable to pick up item, hand is full")
-
-    def drop_item(self):
-        """Remove an item from the player's holdings."""
-        if self.item:
-            item = self.item
+    def interact(self, interactable):
+        if self.item and not (len(interactable.items)>=interactable.max_items):
+            #player has an item and the interactable have an empty spot
+            self.item = interactable.pick_up_item()
+        elif not self.item and (len(interactable.items)> 0):
+            #player is not holding an item, and the interactable does have one
+            interactable.drop_off_item(self.item)
             self.item = None
-            print("dropped off item")
-            return item
-        else:
-            print(f"Nothing to drop off.")
-    
     

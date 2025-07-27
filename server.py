@@ -1,6 +1,7 @@
 import socket
 from grid import Layout
 from player import Player
+from interactable import initialize_interactable_grid
 import threading
 import json
 
@@ -23,7 +24,7 @@ def get_layout_from_file(file_name):
 
 
 
-def start_server(game_grid, host='localhost', port=53333):
+def start_server(game_grid, interactable_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(5)
@@ -37,7 +38,7 @@ def start_server(game_grid, host='localhost', port=53333):
             player = Player(addr, max_height=10, max_width=10)
             thread = threading.Thread(
                 target=handle_client, 
-                args=(client_socket, addr, player, game_grid, server_socket), 
+                args=(client_socket, addr, player, game_grid, interactable_grid, server_socket),
                 daemon=True
             )
             thread.start()
@@ -51,7 +52,7 @@ def start_server(game_grid, host='localhost', port=53333):
 
     #handle_client(client_socket, addr, player, game_grid)
 
-def handle_client(client_socket, addr, player, game_grid, server_socket=None):
+def handle_client(client_socket, addr, player, game_grid, interactable_grid, server_socket=None):
     try:
         prev_position = player.get_position()
         game_grid.update_cell(prev_position[1], prev_position[0], "PR")
@@ -82,6 +83,16 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
                 #player.move("right")
                 position = (prev_position[0] + 1, prev_position[1])
                 player.direction = 'R'
+            elif data == "interact":
+                #the player wants to interact with the items
+                looking_x,looking_y = player.get_looking_position()
+                looking_interactable = interactable_grid[looking_y][looking_x]
+                if looking_interactable:
+                    player.interact(looking_interactable)
+
+            elif data == "operate":
+                #operate to cook an item
+                pass
             # elif data == "p":
             #     client_socket.sendall(b"Shutting down server.\n")
             #     client_socket.close()
@@ -121,8 +132,8 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
 def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
-
-    start_server(game_grid, host)
+    interactable_grid = initialize_interactable_grid(grid_matrix)
+    start_server(game_grid, interactable_grid, host)
        
     
 
