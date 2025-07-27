@@ -79,15 +79,17 @@ def handle_client(client_socket, addr, player, game_grid, server_socket=None):
             
 
             # position = player.get_position()
-            
+            player_str = "P" + player.direction
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')
-                player_str = "P"+player.direction
                 game_grid.update_cell(position[1], position[0], player_str)
                 prev_position = position
                 game_grid.display()
-            
+            else:
+                game_grid.update_cell(prev_position[1],prev_position[0],player_str)
+
+
                 print(f"Player position: {position}")
             
 
