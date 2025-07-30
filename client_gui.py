@@ -59,8 +59,8 @@ def draw_player(dir, item, screen, rectangle, bg_color, font = None):
 CELL_SIZE = 40
 GRID_WIDTH = 10
 GRID_HEIGHT = 10
-SCREEN_WIDTH = CELL_SIZE * GRID_WIDTH
-SCREEN_HEIGHT = CELL_SIZE * GRID_HEIGHT
+SCREEN_WIDTH = CELL_SIZE * GRID_WIDTH + 200
+SCREEN_HEIGHT = CELL_SIZE * GRID_HEIGHT + 200
 
 # === NETWORK CONFIG ===
 host = 'localhost'
@@ -92,7 +92,7 @@ def network_thread(client_socket):
 def start_client_gui():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Grid Game")
+    pygame.display.set_caption("Overcooked?! Nah, we're cooked!")
     clock = pygame.time.Clock()
 
     # Connect to server
@@ -109,12 +109,32 @@ def start_client_gui():
     while running:
         screen.fill((255, 255, 255))  # White background
 
+        # === Draw Instructions ===
+        font = pygame.font.SysFont('Arial', 20)
+        texts = [
+            ["SPACE: Interact",
+            "SHIFT: Sprint"],
+            ["TAB: Recipes",
+            "Q: Quit"]
+        ]
+        for row, text_pair in enumerate(texts):
+            for col, text in enumerate(text_pair):
+                txt = font.render(text, True, (0, 0, 0))
+                text_rect = txt.get_rect()
+                text_rect.left = 20 + (col * 150)
+                text_rect.bottom = SCREEN_HEIGHT - 20 - (row * 25)
+                screen.blit(txt, text_rect)
+
+        # === Draw Player Item HUD ===
+        # cant do this because client doesn't know which player it is
+
+
         # === Draw Grid ===
         for row in range(local_grid.height):
             for col in range(local_grid.width):
                 value = local_grid.get_cell(row, col)
-                x = col * CELL_SIZE
-                y = row * CELL_SIZE
+                x = col * CELL_SIZE + 100
+                y = row * CELL_SIZE + 100
                 rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
                 cell_object = value[0]
                 # Draw filled cells
@@ -154,16 +174,16 @@ def start_client_gui():
         now = pygame.time.get_ticks()
 
         if now - last_move_time > move_delay:
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_UP] or keys[pygame.K_w]:
                 key_queue.put("up")
                 last_move_time = now
-            elif keys[pygame.K_DOWN]:
+            elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 key_queue.put("down")
                 last_move_time = now
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 key_queue.put("left")
                 last_move_time = now
-            elif keys[pygame.K_RIGHT]:
+            elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 key_queue.put("right")
                 last_move_time = now
             elif keys[pygame.K_SPACE]:
