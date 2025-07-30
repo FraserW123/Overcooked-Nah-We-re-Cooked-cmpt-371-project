@@ -2,7 +2,7 @@ import pygame
 import socket
 import threading
 import queue
-from grid import Layout  # your existing grid class
+from grid import Layout
 import json
 from server import get_layout_from_file
 
@@ -141,29 +141,24 @@ def start_client_gui():
 
         # === Handle Events ===
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    key_queue.put("quit")
-                    running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        key_queue.put("quit")
-                        running = False
+            pass
+
 
         # === Continuous movement check ===
         keys = pygame.key.get_pressed()
         now = pygame.time.get_ticks()
 
         if now - last_move_time > move_delay:
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_UP] or keys[pygame.K_w]:
                 key_queue.put("up")
                 last_move_time = now
-            elif keys[pygame.K_DOWN]:
+            elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 key_queue.put("down")
                 last_move_time = now
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 key_queue.put("left")
                 last_move_time = now
-            elif keys[pygame.K_RIGHT]:
+            elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 key_queue.put("right")
                 last_move_time = now
             elif keys[pygame.K_SPACE]:
@@ -172,6 +167,9 @@ def start_client_gui():
                     interact_cd += 8
             elif keys[pygame.K_LSHIFT]:
                 move_delay = 20  # Speed up movement
+            elif keys[pygame.K_q] or keys[pygame.K_ESCAPE]:
+                key_queue.put("quit")
+                running = False
             else:
                 move_delay = 100
 
