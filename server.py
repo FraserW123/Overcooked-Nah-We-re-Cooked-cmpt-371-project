@@ -5,7 +5,7 @@ from interactable import initialize_interactable_grid
 import threading
 import json
 
-host = '207.23.219.202'
+host = 'localhost'
 port = 53333
 server_running = True
 CLIENT_LIMIT = 4
@@ -146,8 +146,6 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
     finally:
         position = player.get_position()
         game_grid.update_cell(position[1], position[0],'.')
-        NUM_CLIENTS -= 1
-        print(NUM_CLIENTS)
         client_socket.close()
         print("Connection closed")
 
