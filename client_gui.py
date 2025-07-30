@@ -64,7 +64,8 @@ SCREEN_WIDTH = CELL_SIZE * GRID_WIDTH + 200
 SCREEN_HEIGHT = CELL_SIZE * GRID_HEIGHT + 200
 
 # === NETWORK CONFIG ===
-host = 'localhost'
+host = "localhost"
+#host = '207.23.219.202'
 port = 53333
 key_queue = queue.Queue()
 
