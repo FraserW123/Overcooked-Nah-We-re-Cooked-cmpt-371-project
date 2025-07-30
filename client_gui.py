@@ -113,6 +113,7 @@ def start_client_gui():
     move_delay = 100  # milliseconds between moves
     last_move_time = pygame.time.get_ticks()
     interact_cd = 0
+    show_popup = False
     while running:
         screen.fill((255, 255, 255))  # White background
 
@@ -164,19 +165,55 @@ def start_client_gui():
 
                 pygame.draw.rect(screen, (0, 0, 0), rect, 1)  # Border
 
+        # === Draw Popup ===
+        if show_popup:
+
+            popup_width = 300
+            popup_height = 200
+            popup_x = (SCREEN_WIDTH - popup_width) // 2
+            popup_y = (SCREEN_HEIGHT - popup_height) // 2
+            popup_rect = pygame.Rect(popup_x, popup_y, popup_width, popup_height)
+            
+            pygame.draw.rect(screen, (240, 240, 240), popup_rect)
+            pygame.draw.rect(screen, (0, 0, 0), popup_rect, 3)
+            
+            popup_font = pygame.font.SysFont('Arial', 24, bold=True)
+            title_text = popup_font.render("Recipes", True, (0, 0, 0))
+            title_rect = title_text.get_rect()
+            title_rect.centerx = popup_rect.centerx
+            title_rect.y = popup_y + 20
+            screen.blit(title_text, title_rect)
+            
+            content_font = pygame.font.SysFont('Arial', 18)
+            recipes = [
+                "h = b + p + c + b",
+                "",
+                "Press TAB to close"
+            ]
+            
+            for i, recipe in enumerate(recipes):
+                recipe_text = content_font.render(recipe, True, (0, 0, 0))
+                recipe_rect = recipe_text.get_rect()
+                recipe_rect.x = popup_x + 20
+                recipe_rect.y = popup_y + 70 + (i * 30)
+                screen.blit(recipe_text, recipe_rect)
+
         pygame.display.flip()
 
 
         # === Handle Events ===
         for event in pygame.event.get():
-            pass
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    show_popup = not show_popup
 
 
         # === Continuous movement check ===
         keys = pygame.key.get_pressed()
         now = pygame.time.get_ticks()
 
-        if now - last_move_time > move_delay:
+        # Only handle movement if popup is not open
+        if not show_popup and now - last_move_time > move_delay:
             if keys[pygame.K_UP] or keys[pygame.K_w]:
                 key_queue.put("up")
                 last_move_time = now
