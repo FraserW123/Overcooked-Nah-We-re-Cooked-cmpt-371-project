@@ -31,7 +31,6 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
     #server_socket.settimeout(1.0)  # Set timeout to 1 second
     print(f"Server started on {host}:{port}")
 
-
     try:
         while server_running:
             client_socket, addr = server_socket.accept()
@@ -95,6 +94,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
             elif data == "operate":
                 #operate to cook an item
                 pass
+            elif data == "heartbeat":
+                pass
             # elif data == "p":
             #     client_socket.sendall(b"Shutting down server.\n")
             #     client_socket.close()
@@ -126,10 +127,16 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
 
             response = "Message received"
             grid_state = json.dumps(game_grid.get_grid())
+            # for client in clients:
+            #     try:
+            #         client.sendall(grid_state.encode())
+            #     except Exception as e:
+            #         print(f"Error sending data to client: {e}")
             client_socket.sendall(grid_state.encode())
     except Exception as e:
         print(f"Error: {e}")
     finally:
+
         client_socket.close()
         print("Connection closed")
 
