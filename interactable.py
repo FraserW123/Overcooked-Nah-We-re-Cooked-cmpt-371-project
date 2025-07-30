@@ -59,6 +59,13 @@ class garbage_bin(Interactable):
 
 
 class ingredient_bin(Interactable):
+
+    def __init__(self, x, y, items=None, max_items=3):
+        #taking in an x, y coordinate,
+        # and an item list of up to three items to be present on the table
+        super().__init__(x, y, items, max_items)
+        self.max_items = 1
+
     def pick_up_item(self):
         item = self.items[-1]
         return item
