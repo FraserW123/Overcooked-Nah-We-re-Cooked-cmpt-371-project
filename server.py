@@ -5,10 +5,13 @@ from interactable import initialize_interactable_grid
 import threading
 import json
 
-host = 'localhost'
+host = '207.23.219.202'
+port = 53333
 server_running = True
+CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
+
 
 def get_layout_from_file(file_name):
     with open(file_name, 'r') as f:
@@ -30,7 +33,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
     server_socket.listen(5)
     #server_socket.settimeout(1.0)  # Set timeout to 1 second
     print(f"Server started on {host}:{port}")
-
+    
     try:
         while server_running:
             client_socket, addr = server_socket.accept()
@@ -136,7 +139,10 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
     except Exception as e:
         print(f"Error: {e}")
     finally:
-
+        position = player.get_position()
+        game_grid.update_cell(position[1], position[0],'.')
+        NUM_CLIENTS -= 1
+        print(NUM_CLIENTS)
         client_socket.close()
         print("Connection closed")
 
@@ -144,7 +150,7 @@ def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
     interactable_grid = initialize_interactable_grid(grid_matrix)
-    start_server(game_grid, interactable_grid, host)
+    start_server(game_grid, interactable_grid, host, port)
        
     
 
