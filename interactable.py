@@ -19,6 +19,9 @@ def initialize_interactable_grid(grid):
             elif grid[row][col][0] == 'I':
                 #I for ingredient bin
                 interactable_grid[row][col] = ingredient_bin(col,row, items = [grid[row][col][1]])
+            elif grid[row][col][0] == 'A':
+                #A for assembly station
+                interactable_grid[row][col] = assembly_station(col,row)
     return interactable_grid
 
 class Interactable:
@@ -72,5 +75,27 @@ class ingredient_bin(Interactable):
     def put_down_item(self,new_item):
         pass
 
+class assembly_station(Interactable):
+    
+    def __init__(self, x, y, items=None, max_items=3):
+        #taking in an x, y coordinate,
+        # and an item list of up to three items to be present on the table
+        super().__init__(x, y, items, max_items)
+        self.max_items = 5
+        
+    def pick_up_item(self):
+        if len(self.items)>0:
+            item = self.items[-1]
+            self.items.pop()
+            return item
+        else:
+            print("unable to pick up item")
+            
+    def put_down_item(self,new_item):
+        holding = len(self.items)
+        if holding < self.max_items:
+            self.items.append(new_item)
+        else:
+            print("unable to drop off item")
 
 
