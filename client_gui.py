@@ -5,6 +5,7 @@ import queue
 from grid import Layout  # your existing grid class
 import json
 from server import get_layout_from_file
+import time
 
 
 def draw_interactable(letter,items,screen,rectangle, bg_color, font = None):
@@ -73,9 +74,12 @@ local_grid = Layout(layout=get_layout_from_file("grid.txt"))
 # === Networking Thread ===
 def network_thread(client_socket):
     while True:
-        message = key_queue.get()
-        if message == "quit":
-            break
+        try:
+            message = key_queue.get_nowait()
+            if message == "quit":
+                break
+        except queue.Empty:
+            message = "heartbeat"
 
         try:
             client_socket.sendall(message.encode())
@@ -85,6 +89,8 @@ def network_thread(client_socket):
             #print("Server response:", response)
         except:
             break
+
+        time.sleep(0.1)
 
     client_socket.close()
 
