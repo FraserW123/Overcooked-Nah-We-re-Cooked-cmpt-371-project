@@ -8,7 +8,7 @@ from server import get_layout_from_file
 import time
 
 
-def draw_interactable(letter,items,screen,rectangle, bg_color, font = None):
+def draw_interactable(letter,items,screen,rectangle, bg_color, font = None, item_text_font = None):
     # draw a certain letter on top of a defined rectangle
     pygame.draw.rect(screen, bg_color, rectangle)
     # a font that is 2 pixels smaller than the cell
@@ -18,12 +18,12 @@ def draw_interactable(letter,items,screen,rectangle, bg_color, font = None):
     text_rect = text.get_rect(center=rectangle.center)
     screen.blit(text, text_rect)
     if items:
-        item_font = pygame.font.SysFont(font, CELL_SIZE -6)
+        item_font = pygame.font.SysFont(item_text_font, CELL_SIZE//2)
         item_text = item_font.render(items, True, (178, 34, 34))
         item_rect = item_text.get_rect()
-        item_rect.bottomright = rectangle.bottomright
-        item_rect.x -= 2  # slight padding
-        item_rect.y -= 2
+        item_rect.bottomleft = rectangle.bottomleft
+        item_rect.x += 5  # slight padding
+        item_rect.y -= 5
 
         screen.blit(item_text, item_rect)
 
@@ -154,6 +154,7 @@ def start_client_gui():
                         item = None
                     draw_player(dir,item,screen,rect,(0, 100, 255))
                 elif cell_object.isalpha() and cell_object.isupper():
+                    #for alphabet character, draw it on the cell
                     if len(value)>1:
                         items = value[1:]
                     else: items = None

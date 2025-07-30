@@ -24,7 +24,7 @@ def initialize_interactable_grid(grid):
 class Interactable:
 # the super class of stations,
 
-    def __init__(self, x, y, items=None, max_items = 3):
+    def __init__(self, x, y, items=None, max_items = 5):
         #taking in an x, y coordinate,
         # and an item list of up to three items to be present on the table
         self.x = x
@@ -57,12 +57,9 @@ class garbage_bin(Interactable):
     def put_down_item(self,new_item):
         pass
 
-
 class ingredient_bin(Interactable):
 
-    def __init__(self, x, y, items=None, max_items=3):
-        #taking in an x, y coordinate,
-        # and an item list of up to three items to be present on the table
+    def __init__(self, x, y, items=None, max_items=5):
         super().__init__(x, y, items, max_items)
         self.max_items = 1
 
@@ -71,6 +68,4 @@ class ingredient_bin(Interactable):
         return item
     def put_down_item(self,new_item):
         pass
-
-
 

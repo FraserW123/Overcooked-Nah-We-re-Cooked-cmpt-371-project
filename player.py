@@ -59,7 +59,7 @@ class Player:
         elif direction == "R":
             return (x+1, y)
     def interact(self, interactable):
-        if self.item and not (len(interactable.items)>=interactable.max_items):
+        if self.item and (len(interactable.items)<interactable.max_items):
             #player has an item and the interactable have an empty spot
             interactable.put_down_item(self.item)
             self.item=None

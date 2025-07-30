@@ -15,8 +15,13 @@ def get_layout_from_file(file_name):
         grid_string = f.read()
     grid_list = grid_string.split("\n")
     grid_matrix = []
+    width = -1
     for row in grid_list:
         row_list = row.split(" ")
+        if width == -1:
+            width = len(row_list)
+        if width != -1 and width!= len(row_list):
+            print("row has wrong number of items")
         row_list = list(filter(None, row_list))
         grid_matrix.append(row_list)
     return grid_matrix
