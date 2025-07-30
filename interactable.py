@@ -91,11 +91,32 @@ class assembly_station(Interactable):
         else:
             print("unable to pick up item")
             
-    def put_down_item(self,new_item):
+    def put_down_item(self, new_item):
         holding = len(self.items)
         if holding < self.max_items:
             self.items.append(new_item)
+            # Check if the item is a burger and create it
+            self.create_burger()
         else:
             print("unable to drop off item")
+            
+    def create_burger(self):
+        # Krabby Patty
+        if len(self.items) == 5: # check for 5 ingredients
+            # go through the items and check if correct items and in order
+            # H = b + p + c + l + b
+            if (self.items[0] == "b" and
+                self.items[1] == "p" and
+                self.items[2] == "c" and
+                self.items[3] == "l" and
+                self.items[4] == "b"):
+                self.items.append("H") 
+                for ingredient in self.items[:4]:  # Remove the first 4 ingredients used for the burger
+                    if ingredient in self.items:
+                        self.items.remove(ingredient)
+                return True
+        else:
+            print("Not enough ingredients to create a burger.")
+            return False
 
 
