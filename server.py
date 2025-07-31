@@ -4,6 +4,7 @@ from player import Player
 from interactable import initialize_interactable_grid
 import threading
 import json
+import random
 
 host = 'localhost'
 port = 53333
@@ -38,14 +39,18 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
     server_socket.listen(5)
     #server_socket.settimeout(1.0)  # Set timeout to 1 second
     print(f"Server started on {host}:{port}")
+    player_id = 0
     
     try:
         while server_running:
             client_socket, addr = server_socket.accept()
-            player = Player(addr, max_height=10, max_width=10)
+            
+            color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+            player = Player(player_id, color, max_height=10, max_width=10)
+            player_id += 1
             thread = threading.Thread(
                 target=handle_client, 
-                args=(client_socket, addr, player, game_grid, interactable_grid, server_socket),
+                args=(client_socket, player_id, player, game_grid, interactable_grid, server_socket),
                 daemon=True
             )
             thread.start()
@@ -115,9 +120,9 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
             
 
             # position = player.get_position()
-            player_str = "P" + player.direction
-            if player.item:
-                player_str += player.item
+            player_str = create_player_string(player)
+
+
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')
@@ -135,12 +140,27 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
 
             response = "Message received"
             grid_state = json.dumps(game_grid.get_grid())
+
+            response_data = {
+                "grid": game_grid.get_grid(),
+                # "player_id": str(addr),
+                # "player_position": player.get_position(),
+                # "player_direction": player.direction,
+                # "player_inventory": player.item,
+                # "player_color": player.get_color()
+            }
+            client_socket.sendall(json.dumps(response_data).encode())
+
+
+
+
+
             # for client in clients:
             #     try:
             #         client.sendall(grid_state.encode())
             #     except Exception as e:
             #         print(f"Error sending data to client: {e}")
-            client_socket.sendall(grid_state.encode())
+            #client_socket.sendall(grid_state.encode())
     except Exception as e:
         print(f"Error: {e}")
     finally:
@@ -148,6 +168,17 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
         game_grid.update_cell(position[1], position[0],'.')
         client_socket.close()
         print("Connection closed")
+
+def create_player_string(player):
+    player_str = "P;" + player.direction+";"
+    if player.item:
+        player_str += player.item
+    else:
+        player_str += "None;"
+    player_str += str(player.get_color())
+    id = ";"+str(player.get_id())
+    player_str += id
+    return player_str
 
 def main():
     grid_matrix = get_layout_from_file("grid.txt")
