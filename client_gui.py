@@ -202,7 +202,7 @@ def start_client_gui():
             
             content_font = pygame.font.SysFont('Arial', 18)
             recipes = [
-                "h = b + p + c + b",
+                "h = b + p + c + l + b",
                 "",
                 "Press TAB to close"
             ]
