@@ -172,7 +172,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
 def create_player_string(player):
     player_str = "P;" + player.direction+";"
     if player.item:
-        player_str += player.item
+        item = player.item + ";"
+        player_str += item
     else:
         player_str += "None;"
     player_str += str(player.get_color())
