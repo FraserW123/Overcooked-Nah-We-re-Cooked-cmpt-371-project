@@ -3,12 +3,13 @@ import socket
 import threading
 import queue
 from grid import Layout
+from player import Player
 import json
 from server import get_layout_from_file
 import time
 
 
-def draw_interactable(letter,items,screen,rectangle, bg_color, font = None):
+def draw_interactable(letter,items,screen,rectangle, bg_color, font = None, item_text_font = None):
     # draw a certain letter on top of a defined rectangle
     pygame.draw.rect(screen, bg_color, rectangle)
     # a font that is 2 pixels smaller than the cell
@@ -18,12 +19,12 @@ def draw_interactable(letter,items,screen,rectangle, bg_color, font = None):
     text_rect = text.get_rect(center=rectangle.center)
     screen.blit(text, text_rect)
     if items:
-        item_font = pygame.font.SysFont(font, CELL_SIZE -6)
+        item_font = pygame.font.SysFont(item_text_font, CELL_SIZE//2)
         item_text = item_font.render(items, True, (178, 34, 34))
         item_rect = item_text.get_rect()
-        item_rect.bottomright = rectangle.bottomright
-        item_rect.x -= 2  # slight padding
-        item_rect.y -= 2
+        item_rect.bottomleft = rectangle.bottomleft
+        item_rect.x += 5  # slight padding
+        item_rect.y -= 5
 
         screen.blit(item_text, item_rect)
 
@@ -71,6 +72,7 @@ key_queue = queue.Queue()
 # === Setup Layout for local rendering ===
 local_grid = Layout(layout=get_layout_from_file("grid.txt"))
 
+
 # === Networking Thread ===
 def network_thread(client_socket):
     while True:
@@ -84,7 +86,16 @@ def network_thread(client_socket):
         try:
             client_socket.sendall(message.encode())
             response = client_socket.recv(4096).decode()
-            grid_data = json.loads(response)
+
+            
+
+            grid_data = json.loads(response)['grid']
+            # print(json.loads(response)['player_id'])
+            # print(json.loads(response)['player_position'])
+            # print(json.loads(response)['player_direction'])
+            # print(json.loads(response)['player_inventory'])
+            # print(json.loads(response)['player_color'])
+
             local_grid.grid = grid_data  # Update local grid with server data
             #print("Server response:", response)
         except:
@@ -146,14 +157,21 @@ def start_client_gui():
                 cell_object = value[0]
                 # Draw filled cells
                 if cell_object == "P":
-                    dir = value[1]
+                    player_values = value.split(";")
+                    dir = player_values[1]
 
-                    if len(value)>2:
-                        item = value[2]
-                    else:
+                    if player_values[2] == "None":
                         item = None
-                    draw_player(dir,item,screen,rect,(0, 100, 255))
+                    else:
+                        item = player_values[2]
+
+                    color = get_color(player_values)
+                    
+                    draw_player(dir,item,screen,rect, color)
+
+
                 elif cell_object.isalpha() and cell_object.isupper():
+                    #for alphabet character, draw it on the cell
                     if len(value)>1:
                         items = value[1:]
                     else: items = None
@@ -240,6 +258,11 @@ def start_client_gui():
         if interact_cd>0:
             interact_cd -= 1
     pygame.quit()
+
+def get_color(player_values):
+    color_elements = player_values[3].strip("()").split(",")
+    color = tuple(map(int, color_elements))
+    return color
 
 if __name__ == "__main__":
     start_client_gui()

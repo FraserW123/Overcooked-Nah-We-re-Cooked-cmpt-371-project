@@ -2,3 +2,4 @@
 T represent the table, the trailing letter represent the content on the table
 I represents the ingredient bin, the trailing letter represent the ingredient in the bin
 G represent the garbage bin， no trailing letters
+O wall, have no real function beside being in the way

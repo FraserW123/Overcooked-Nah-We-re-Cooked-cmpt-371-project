@@ -1,12 +1,13 @@
 
 class Player:
-    def __init__(self, id, max_height=10, max_width=10):
+    def __init__(self, id=0, color=(255,255,255), max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
         self.direction = 'R' #starting direction of the player, facing right
         self.item = None  #the items the player is holding
         self.id = id
         self.max_height = max_height
         self.max_width = max_width
+        self.color = color
 
     def move(self, direction):
         """Move the player in a specified direction."""
@@ -46,6 +47,13 @@ class Player:
             self.position = position
         else:
             print("Position out of bounds.")
+
+    def set_color(self, color):
+        self.color = color
+
+    def get_color(self):
+        return self.color
+    
     def get_looking_position(self):
         #getting the position that the player is looking at
         x, y = self.position
@@ -59,7 +67,7 @@ class Player:
         elif direction == "R":
             return (x+1, y)
     def interact(self, interactable):
-        if self.item and not (len(interactable.items)>=interactable.max_items):
+        if self.item and (len(interactable.items)<interactable.max_items):
             #player has an item and the interactable have an empty spot
             interactable.put_down_item(self.item)
             self.item=None
