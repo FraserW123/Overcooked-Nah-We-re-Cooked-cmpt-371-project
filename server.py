@@ -6,6 +6,7 @@ import threading
 import json
 import random
 import signal
+from tasklist import TaskList
 
 host = 'localhost'
 port = 53333
@@ -156,7 +157,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
                 # "player_id": str(addr),
                 # "player_position": player.get_position(),
                 # "player_direction": player.direction,
-                # "player_inventory": player.item,
+                "player_inventory": player.item,
                 # "player_color": player.get_color()
             }
             client_socket.sendall(json.dumps(response_data).encode())
