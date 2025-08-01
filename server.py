@@ -5,6 +5,7 @@ from interactable import initialize_interactable_grid
 import threading
 import json
 import random
+import signal
 
 host = 'localhost'
 port = 53333
@@ -12,7 +13,6 @@ server_running = True
 CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
-
 
 def get_layout_from_file(file_name):
     with open(file_name, 'r') as f:
@@ -31,13 +31,22 @@ def get_layout_from_file(file_name):
     return grid_matrix
 
 
+def choose_random_color():
+    R = random.randint(0, 255)
+    G = random.randint(0, 255)
+    B = random.randint(0, 255)
 
+    # Ensure the values are not too close to each other
+    while abs(R - G) < 50 or abs(G - B) < 50 or abs(B - R) < 50:
+        R = random.randint(0, 255)
+        G = random.randint(0, 255)
+        B = random.randint(0, 255)
+    return (R, G, B)
 
 def start_server(game_grid, interactable_grid, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(5)
-    #server_socket.settimeout(1.0)  # Set timeout to 1 second
     print(f"Server started on {host}:{port}")
     player_id = 0
     
@@ -45,15 +54,16 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
         while server_running:
             client_socket, addr = server_socket.accept()
             
-            color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+            color = choose_random_color()
             player = Player(player_id, color, max_height=10, max_width=10)
-            player_id += 1
+            
             thread = threading.Thread(
                 target=handle_client, 
                 args=(client_socket, player_id, player, game_grid, interactable_grid, server_socket),
                 daemon=True
             )
             thread.start()
+            player_id += 1
     except KeyboardInterrupt:
         print("\n[!] Shutting down server...")
     finally:
