@@ -14,6 +14,7 @@ server_running = True
 CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
+lock = threading.Lock()
 
 def get_layout_from_file(file_name):
     with open(file_name, 'r') as f:
@@ -132,8 +133,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
             
 
             # position = player.get_position()
+            lock.acquire()
             player_str = create_player_string(player)
-
 
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
@@ -146,7 +147,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
 
 
                 print(f"Player position: {position}")
-            
+            lock.release()
 
             
 
