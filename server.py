@@ -44,12 +44,13 @@ def choose_random_color():
         B = random.randint(0, 255)
     return (R, G, B)
 
-def start_server(game_grid, interactable_grid, host='localhost', port=53333):
+def start_server(game_grid, interactable_grid, task_list, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(5)
     print(f"Server started on {host}:{port}")
     player_id = 0
+    task_list.get_tasklist(5)
     
     try:
         while server_running:
@@ -60,7 +61,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
             
             thread = threading.Thread(
                 target=handle_client, 
-                args=(client_socket, player_id, player, game_grid, interactable_grid, server_socket),
+                args=(client_socket, player_id, player, game_grid, interactable_grid, task_list, server_socket),
                 daemon=True
             )
             thread.start()
@@ -75,7 +76,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
 
     #handle_client(client_socket, addr, player, game_grid)
 
-def handle_client(client_socket, addr, player, game_grid, interactable_grid, server_socket=None):
+def handle_client(client_socket, addr, player, game_grid, interactable_grid, task_list, server_socket=None):
     try:
         prev_position = player.get_position()
         prev_inventory = player.item
@@ -158,6 +159,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
                 # "player_position": player.get_position(),
                 # "player_direction": player.direction,
                 "player_inventory": player.item,
+                "tasklist": task_list.create_string(),
                 # "player_color": player.get_color()
             }
             client_socket.sendall(json.dumps(response_data).encode())
@@ -196,7 +198,8 @@ def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
     interactable_grid = initialize_interactable_grid(grid_matrix)
-    start_server(game_grid, interactable_grid, host, port)
+    task_list = TaskList()
+    start_server(game_grid, interactable_grid, task_list, host, port)
        
     
 

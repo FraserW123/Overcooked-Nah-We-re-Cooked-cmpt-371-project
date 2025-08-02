@@ -73,10 +73,10 @@ key_queue = queue.Queue()
 # === Setup Layout for local rendering ===
 local_grid = Layout(layout=get_layout_from_file("grid.txt"))
 inventory = None
-
+task_list = None
 # === Networking Thread ===
 def network_thread(client_socket):
-    global inventory
+    global inventory, task_list
 
     while True:
         try:
@@ -94,6 +94,7 @@ def network_thread(client_socket):
 
             grid_data = json.loads(response)['grid']
             inventory = json.loads(response)['player_inventory']
+            task_list = json.loads(response)['tasklist']
             # print(json.loads(response)['player_id'])
             # print(json.loads(response)['player_position'])
             # print(json.loads(response)['player_direction'])
@@ -111,7 +112,7 @@ def network_thread(client_socket):
 
 # === Pygame Front-End ===
 def start_client_gui():
-    global inventory
+    global inventory, task_list
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Overcooked?! Nah, we're cooked!")
@@ -148,33 +149,51 @@ def start_client_gui():
                 text_rect.bottom = SCREEN_HEIGHT - 20 - (row * 25)
                 screen.blit(txt, text_rect)
 
+        # === Draw Tasklist HUD ===
+        if task_list:
+            tasks_string = task_list.replace("TaskList: ", "")
+            tasks = tasks_string.split(", ")
+            hud_font = pygame.font.SysFont('Arial', 22, bold=True)
+            
+            display_text = "Orders: "
+            
+            for i, task in enumerate(tasks):
+                if task == "completed":
+                    display_text += "✓"
+                else:
+                    display_text += task
+                
+                if i < len(tasks) - 1:
+                    display_text += ", "
+            
+            task_surface = hud_font.render(display_text, True, (0, 0, 0))
+            
+            task_rect = task_surface.get_rect()
+            task_rect.topleft = (20, 20)
+            
+            screen.blit(task_surface, task_rect) 
+ 
 
         # === Draw Player Item HUD ===
         if inventory and inventory != "None":
-            hud_font = pygame.font.SysFont('Arial', 24, bold=True)
-            item_text = f"Item: {inventory}"
+            hud_font = pygame.font.SysFont('Arial', 20)
+            item_text = f"Item: {inventory}   "
             item_surface = hud_font.render(item_text, True, (0, 0, 0))
             
-            # Position in bottom right corner
             item_rect = item_surface.get_rect()
-            item_rect.bottomright = (SCREEN_WIDTH - 20, SCREEN_HEIGHT - 80)  # Above the instructions
-            
-            # Add background for better visibility
-            bg_rect = item_rect.inflate(10, 5)  # Add padding
-            pygame.draw.rect(screen, (240, 240, 240), bg_rect)
-            pygame.draw.rect(screen, (0, 0, 0), bg_rect, 2)
+            item_rect.bottomright = (SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20)
             
             screen.blit(item_surface, item_rect)
         else:
-            # Show "No item" when inventory is empty or None
             hud_font = pygame.font.SysFont('Arial', 20)
-            no_item_text = "Item: None"
-            no_item_surface = hud_font.render(no_item_text, True, (128, 128, 128))  # Gray text
+            no_item_text = "Item: ___"
+            no_item_surface = hud_font.render(no_item_text, True, (0, 0, 0))
             
             item_rect = no_item_surface.get_rect()
-            item_rect.bottomright = (SCREEN_WIDTH - 20, SCREEN_HEIGHT - 80)
+            item_rect.bottomright = (SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20)
             
             screen.blit(no_item_surface, item_rect)
+
 
 
         # === Draw Grid ===
