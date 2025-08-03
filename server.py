@@ -6,6 +6,7 @@ import threading
 import json
 import random
 import signal
+from tasklist import TaskList
 
 host = 'localhost'
 port = 53333
@@ -13,6 +14,7 @@ server_running = True
 CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
+lock = threading.Lock()
 
 def get_layout_from_file(file_name):
     with open(file_name, 'r') as f:
@@ -43,12 +45,13 @@ def choose_random_color():
         B = random.randint(0, 255)
     return (R, G, B)
 
-def start_server(game_grid, interactable_grid, host='localhost', port=53333):
+def start_server(game_grid, interactable_grid, task_list, host='localhost', port=53333):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(5)
     print(f"Server started on {host}:{port}")
     player_id = 0
+    task_list.get_tasklist(5)
     
     try:
         while server_running:
@@ -59,7 +62,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
             
             thread = threading.Thread(
                 target=handle_client, 
-                args=(client_socket, player_id, player, game_grid, interactable_grid, server_socket),
+                args=(client_socket, player_id, player, game_grid, interactable_grid, task_list, server_socket),
                 daemon=True
             )
             thread.start()
@@ -74,7 +77,7 @@ def start_server(game_grid, interactable_grid, host='localhost', port=53333):
 
     #handle_client(client_socket, addr, player, game_grid)
 
-def handle_client(client_socket, addr, player, game_grid, interactable_grid, server_socket=None):
+def handle_client(client_socket, addr, player, game_grid, interactable_grid, task_list, server_socket=None):
     try:
         prev_position = player.get_position()
         prev_inventory = player.item
@@ -130,8 +133,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
             
 
             # position = player.get_position()
+            lock.acquire()
             player_str = create_player_string(player)
-
 
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
@@ -144,7 +147,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
 
 
                 print(f"Player position: {position}")
-            
+            lock.release()
 
             
 
@@ -156,7 +159,8 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, ser
                 # "player_id": str(addr),
                 # "player_position": player.get_position(),
                 # "player_direction": player.direction,
-                # "player_inventory": player.item,
+                "player_inventory": player.item,
+                "tasklist": task_list.create_string(),
                 # "player_color": player.get_color()
             }
             client_socket.sendall(json.dumps(response_data).encode())
@@ -195,7 +199,8 @@ def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
     interactable_grid = initialize_interactable_grid(grid_matrix)
-    start_server(game_grid, interactable_grid, host, port)
+    task_list = TaskList()
+    start_server(game_grid, interactable_grid, task_list, host, port)
        
     
 
