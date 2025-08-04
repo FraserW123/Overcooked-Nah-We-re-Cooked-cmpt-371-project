@@ -1,6 +1,16 @@
 . represent an empty floor tile
 T represent the table, the trailing letter represent the content on the table
 I represents the ingredient bin, the trailing letter represent the ingredient in the bin
+    b - burger buns
+    p - patty
+    c - cheese
+    l - lettuce
+    r - rice
+    f - fish
+    w - seaweed
+    d - dough
+    t - tomato sauce
+    o - pepperoni
 G represent the garbage bin， no trailing letters
 O wall, have no real function beside being in the way
 A represents the assembly station, the trailing letter represents the content on the station

@@ -94,25 +94,56 @@ class assembly_station(Interactable):
         holding = len(self.items)
         if holding < self.max_items:
             self.items.append(new_item)
-            # Check if the item is a burger and create it
-            self.create_burger()
+
+            if len(self.items) == 5:
+                # Check if the item is a burger and create it
+                self.create_burger()
+            elif len(self.items) == 3:
+                # Check if the item is a sushi and create it
+                self.create_sushi()
+            elif len(self.items) == 4:
+                # Check if the item is a pizza and create it
+                self.create_pizza()
         else:
             print("unable to drop off item")
             
     def create_burger(self):
         # Krabby Patty
-        if len(self.items) == 5: # check for 5 ingredients
-            # go through the items and check if correct items and in order
-            # h = b + p + c + l + b
-            if (self.items[0] == "b" and self.items[1] == "p" and
-                self.items[2] == "c" and self.items[3] == "l" and
-                self.items[4] == "b"):
-                # Clear the items and create a burger
-                self.items.clear()
-                self.items.append("h") 
-                print("Burger created.")
+        # go through the items and check if correct items and in order
+        # h = b + p + c + l + b
+        if (self.items[0] == "b" and self.items[1] == "p" and
+            self.items[2] == "c" and self.items[3] == "l" and
+            self.items[4] == "b"):
+            # Clear the items and create a burger
+            self.items.clear()
+            self.items.append("h") 
+            print("Burger created.")
         else:
             print("Failure to create burger.")
+
+    def create_sushi(self):
+        # Sushi
+        # go through the items and check if correct items and in order
+        # s = w + r + f
+        if (self.items[0] == "w" and self.items[1] == "r" and
+            self.items[2] == "f"):
+            # Clear the items and create a sushi
+            self.items.clear()
+            self.items.append("s") 
+            print("Sushi created.")
+    
+    def create_pizza(self):
+        # Pizza
+        # go through the items and check if correct items and in order
+        # p = d + t + c + o
+        if (self.items[0] == "d" and self.items[1] == "t" and
+            self.items[2] == "c" and self.items[3] == "o"):
+            # Clear the items and create a pizza
+            self.items.clear()
+            self.items.append("z") 
+            print("Pizza created.")
+        else:
+            print("Failure to create pizza.")
 
 class window(Interactable):
     # submission window for players to submit orders according to task list
