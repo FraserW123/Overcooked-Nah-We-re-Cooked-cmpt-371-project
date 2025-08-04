@@ -198,8 +198,8 @@ def create_player_string(player):
 def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
-    interactable_grid = initialize_interactable_grid(grid_matrix)
     task_list = TaskList()
+    interactable_grid = initialize_interactable_grid(grid_matrix, task_list)
     start_server(game_grid, interactable_grid, task_list, host, port)
        
     

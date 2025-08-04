@@ -158,7 +158,7 @@ def start_client_gui():
             
             for i, task in enumerate(tasks):
                 if task == "completed":
-                    display_text += "✓"
+                    display_text += "√"
                 else:
                     display_text += task
                 

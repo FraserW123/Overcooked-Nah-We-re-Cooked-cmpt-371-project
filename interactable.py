@@ -2,7 +2,7 @@
 from player import Player
 
 
-def initialize_interactable_grid(grid):
+def initialize_interactable_grid(grid, tasklist=None):
     height = len(grid)
     width = len(grid[0])
     interactable_grid = []
@@ -22,8 +22,10 @@ def initialize_interactable_grid(grid):
             elif grid[row][col][0] == 'A':
                 # A for assembly station
                 interactable_grid[row][col] = assembly_station(col, row, items=list(grid[row][col][1:]))
+            elif grid[row][col][0] == 'W':
+                # W for window, initialize with task list from server
+                interactable_grid[row][col] = window(col, row, tasklist)
     return interactable_grid
-
 class Interactable:
 # the super class of stations,
 
@@ -101,7 +103,7 @@ class assembly_station(Interactable):
         # Krabby Patty
         if len(self.items) == 5: # check for 5 ingredients
             # go through the items and check if correct items and in order
-            # H = b + p + c + l + b
+            # h = b + p + c + l + b
             if (self.items[0] == "b" and self.items[1] == "p" and
                 self.items[2] == "c" and self.items[3] == "l" and
                 self.items[4] == "b"):
@@ -111,3 +113,27 @@ class assembly_station(Interactable):
                 print("Burger created.")
         else:
             print("Failure to create burger.")
+
+class window(Interactable):
+    # submission window for players to submit orders according to task list
+    def __init__(self, x, y, tasklist=None):
+        super().__init__(x, y, max_items=0) 
+        self.tasklist = tasklist
+    
+    def put_down_item(self, new_item):
+        # safety check
+        if self.tasklist is None:
+            print("No tasklist available.")
+            return
+        
+        # Check if food is in tasklist
+        if self.tasklist.mark_completed(new_item):
+            print(f"Order submitted successfully: {new_item}")
+            return True
+        else:
+            print(f"Invalid order: {new_item} not in current tasks.")
+            return False
+    
+    def pick_up_item(self):
+        print("Cannot pick up items from the submission window.")
+        pass

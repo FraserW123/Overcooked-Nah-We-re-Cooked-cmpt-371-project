@@ -15,10 +15,12 @@ class TaskList:
         return self.tasks
 
     def mark_completed(self, task):
+        # if food is in the task list, mark it as completed and return True, False o/w
         if task in self.tasks:
             index = self.tasks.index(task)
-            self.tasks[index] = "completed"    
-        return self.tasks
+            self.tasks[index] = "completed"
+            return True  
+        return False
     
     def create_string(self):
         return ', '.join(self.tasks)

@@ -4,3 +4,4 @@ I represents the ingredient bin, the trailing letter represent the ingredient in
 G represent the garbage bin， no trailing letters
 O wall, have no real function beside being in the way
 A represents the assembly station, the trailing letter represents the content on the station
+W represents the window where orders are served.
