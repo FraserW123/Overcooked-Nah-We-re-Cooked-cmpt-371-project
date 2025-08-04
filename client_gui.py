@@ -252,7 +252,7 @@ def start_client_gui():
             recipes = [
                 "h = b + p + c + l + b",
                 "s = w + r + f",
-                "p = d + t + c + o",
+                "z = d + t + c + o",
                 "",
                 "Press TAB to close"
             ]
