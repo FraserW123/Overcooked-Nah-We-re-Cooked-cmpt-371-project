@@ -1,4 +1,3 @@
-
 class Player:
     def __init__(self, id=0, color=(255,255,255), max_height=10, max_width=10):
         self.position = (0, 0)  # Starting position of the player
@@ -67,10 +66,24 @@ class Player:
         elif direction == "R":
             return (x+1, y)
     def interact(self, interactable):
-        if self.item and (len(interactable.items)<interactable.max_items):
-            #player has an item and the interactable have an empty spot
+        # putting import here cuz it'd have a circular import otherwise
+        from interactable import window
+        # Special handling for window submissions
+        if isinstance(interactable, window):
+            if self.item:
+                if interactable.put_down_item(self.item):
+                    # put down item only if it's a valid submission
+                    self.item = None
+                else:
+                    # Can't submit unordered food, put it elsewhere
+                    print("Failed to submit item to window.")
+            else:
+                print("No item to submit.")
+        # Normal interaction for other interactables
+        elif self.item and (len(interactable.items) < interactable.max_items):
+            # Player has an item and the interactable has an empty spot
             interactable.put_down_item(self.item)
-            self.item=None
-        elif not self.item and (len(interactable.items)> 0):
-            #player is not holding an item, and the interactable does have one
+            self.item = None
+        elif not self.item and (len(interactable.items) > 0):
+            # Player is not holding an item, and the interactable does have one
             self.item = interactable.pick_up_item()

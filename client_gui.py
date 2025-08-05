@@ -65,8 +65,7 @@ SCREEN_WIDTH = CELL_SIZE * GRID_WIDTH + 200
 SCREEN_HEIGHT = CELL_SIZE * GRID_HEIGHT + 200
 
 # === NETWORK CONFIG ===
-host = "localhost"
-#host = '207.23.219.202'
+host = 'localhost'
 port = 53333
 key_queue = queue.Queue()
 
@@ -159,7 +158,7 @@ def start_client_gui():
             
             for i, task in enumerate(tasks):
                 if task == "completed":
-                    display_text += "✓"
+                    display_text += "√"
                 else:
                     display_text += task
                 
@@ -251,7 +250,9 @@ def start_client_gui():
             
             content_font = pygame.font.SysFont('Arial', 18)
             recipes = [
-                "h = b + p + c + b",
+                "h = b + p + c + l + b",
+                "s = w + r + f",
+                "z = d + t + c + o",
                 "",
                 "Press TAB to close"
             ]
