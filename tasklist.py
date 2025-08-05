@@ -2,8 +2,9 @@ import random
 class TaskList:
     def __init__(self):
         self.tasks = []
+        
 
-    def get_tasklist(self, amount):
+    def get_tasklist(self, amount=5):
 
         if self.tasks:
             return self.tasks
@@ -21,6 +22,11 @@ class TaskList:
             self.tasks[index] = "completed"
             return True  
         return False
+    
+    def check_completed(self):
+        if all(task == "completed" for task in self.tasks):
+            return "True"
+        return ""
     
     def create_string(self):
         return ', '.join(self.tasks)

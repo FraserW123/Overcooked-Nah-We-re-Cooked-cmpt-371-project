@@ -73,9 +73,10 @@ key_queue = queue.Queue()
 local_grid = Layout(layout=get_layout_from_file("grid.txt"))
 inventory = None
 task_list = None
+task_list_completed = False
 # === Networking Thread ===
 def network_thread(client_socket):
-    global inventory, task_list
+    global inventory, task_list, task_list_completed
 
     while True:
         try:
@@ -94,6 +95,7 @@ def network_thread(client_socket):
             grid_data = json.loads(response)['grid']
             inventory = json.loads(response)['player_inventory']
             task_list = json.loads(response)['tasklist']
+            task_list_completed = bool(json.loads(response)['tasklist_completed'])
             # print(json.loads(response)['player_id'])
             # print(json.loads(response)['player_position'])
             # print(json.loads(response)['player_direction'])
@@ -111,7 +113,7 @@ def network_thread(client_socket):
 
 # === Pygame Front-End ===
 def start_client_gui():
-    global inventory, task_list
+    global inventory, task_list, task_list_completed
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Overcooked?! Nah, we're cooked!")
@@ -129,6 +131,8 @@ def start_client_gui():
     last_move_time = pygame.time.get_ticks()
     interact_cd = 0
     show_popup = False
+    keep_popup = True
+
     while running:
         screen.fill((255, 255, 255))  # White background
 
@@ -248,7 +252,7 @@ def start_client_gui():
             title_rect.y = popup_y + 20
             screen.blit(title_text, title_rect)
             
-            content_font = pygame.font.SysFont('Arial', 18)
+            context_font = pygame.font.SysFont('Arial', 18)
             recipes = [
                 "h = b + p + c + l + b",
                 "s = w + r + f",
@@ -258,11 +262,31 @@ def start_client_gui():
             ]
             
             for i, recipe in enumerate(recipes):
-                recipe_text = content_font.render(recipe, True, (0, 0, 0))
+                recipe_text = context_font.render(recipe, True, (0, 0, 0))
                 recipe_rect = recipe_text.get_rect()
                 recipe_rect.x = popup_x + 20
                 recipe_rect.y = popup_y + 70 + (i * 30)
                 screen.blit(recipe_text, recipe_rect)
+
+        # === Draw End Screen ===
+        if task_list_completed and keep_popup:
+
+            popup_width = 300
+            popup_height = 200
+            popup_x = (SCREEN_WIDTH - popup_width) // 2
+            popup_y = (SCREEN_HEIGHT - popup_height) // 2
+            popup_rect = pygame.Rect(popup_x, popup_y, popup_width, popup_height)
+            
+            pygame.draw.rect(screen, (240, 240, 240), popup_rect)
+            pygame.draw.rect(screen, (0, 0, 0), popup_rect, 3)
+            
+            popup_font = pygame.font.SysFont('Arial', 24, bold=True)
+            # Display a congratulatory message
+            title_text = popup_font.render("All Orders Completed!", True, (0, 0, 0))
+            context_font = pygame.font.SysFont('Arial', 12)
+            context = context_font.render("Press q or Escape to quit or = to close popup", True, (0, 0, 0))
+            screen.blit(title_text, (popup_x + 20, popup_y + 20))
+            screen.blit(context, (popup_x + 20, popup_y + 180))
 
         pygame.display.flip()
 
@@ -272,6 +296,9 @@ def start_client_gui():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
                     show_popup = not show_popup
+                if event.key == pygame.K_EQUALS and task_list_completed:
+                    keep_popup = not keep_popup
+                
 
 
         # === Continuous movement check ===

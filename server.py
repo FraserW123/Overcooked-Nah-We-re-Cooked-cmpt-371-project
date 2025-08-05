@@ -14,6 +14,7 @@ server_running = True
 CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
 GRID_WIDTH = 10
+NUM_TASKS = 5
 lock = threading.Lock()
 
 def get_layout_from_file(file_name):
@@ -51,7 +52,7 @@ def start_server(game_grid, interactable_grid, task_list, host='localhost', port
     server_socket.listen(5)
     print(f"Server started on {host}:{port}")
     player_id = 0
-    task_list.get_tasklist(5)
+    task_list.get_tasklist(NUM_TASKS)
     
     try:
         while server_running:
@@ -72,10 +73,6 @@ def start_server(game_grid, interactable_grid, task_list, host='localhost', port
     finally:
         server_socket.close()
         print("[+] Server socket closed.")
-
-
-
-    #handle_client(client_socket, addr, player, game_grid)
 
 def handle_client(client_socket, addr, player, game_grid, interactable_grid, task_list, server_socket=None):
     try:
@@ -122,11 +119,6 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
                 pass
             elif data == "heartbeat":
                 pass
-            # elif data == "p":
-            #     client_socket.sendall(b"Shutting down server.\n")
-            #     client_socket.close()
-            #     server_socket.close()  # Close server socket to unblock accept()
-                
             elif data == "quit":
                 print("Client requested to quit.")
                 break
@@ -149,32 +141,14 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
                 print(f"Player position: {position}")
             lock.release()
 
-            
-
-            response = "Message received"
-            grid_state = json.dumps(game_grid.get_grid())
-
             response_data = {
                 "grid": game_grid.get_grid(),
-                # "player_id": str(addr),
-                # "player_position": player.get_position(),
-                # "player_direction": player.direction,
                 "player_inventory": player.item,
                 "tasklist": task_list.create_string(),
-                # "player_color": player.get_color()
+                "tasklist_completed": task_list.check_completed()
             }
             client_socket.sendall(json.dumps(response_data).encode())
 
-
-
-
-
-            # for client in clients:
-            #     try:
-            #         client.sendall(grid_state.encode())
-            #     except Exception as e:
-            #         print(f"Error sending data to client: {e}")
-            #client_socket.sendall(grid_state.encode())
     except Exception as e:
         print(f"Error: {e}")
     finally:
