@@ -17,6 +17,7 @@ GRID_WIDTH = 10
 NUM_TASKS = 5
 lock = threading.Lock()
 
+# get grid from file
 def get_layout_from_file(file_name):
     with open(file_name, 'r') as f:
         grid_string = f.read()
@@ -61,6 +62,7 @@ def start_server(game_grid, interactable_grid, task_list, host='localhost', port
             color = choose_random_color()
             player = Player(player_id, color, max_height=10, max_width=10)
             
+            # multiplayer support using threading
             thread = threading.Thread(
                 target=handle_client, 
                 args=(client_socket, player_id, player, game_grid, interactable_grid, task_list, server_socket),
@@ -88,6 +90,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
                 break
             print(f"Received: {data}")
 
+            # handle data from client (movement, interaction, etc...)
             position = (prev_position[0], prev_position[1])  # Default position
             if data == "up":
                 #player.move("up")
@@ -115,9 +118,10 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
                     cell_string = game_grid.get_grid()[looking_y][looking_x][0]+item_str
                     game_grid.update_cell(looking_y,looking_x,cell_string)
             elif data == "operate":
-                #operate to cook an item
+                #operate to cook an item (possible future feature)
                 pass
             elif data == "heartbeat":
+                # no actual functionaly, just to update the client information
                 pass
             elif data == "quit":
                 print("Client requested to quit.")
@@ -125,9 +129,11 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
             
 
             # position = player.get_position()
+            # locking to ensure players can't move onto the same square (race condition)
             lock.acquire()
             player_str = create_player_string(player)
 
+            # handle player movement, and hitbox mechanism
             if 0 <= position[0] < game_grid.width and 0 <= position[1] < game_grid.height and game_grid.get_cell(position[1], position[0]) == '.':
                 player.set_position((position[0], position[1]))
                 game_grid.update_cell(prev_position[1], prev_position[0],'.')
@@ -141,6 +147,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
                 print(f"Player position: {position}")
             lock.release()
 
+            # prepare response data
             response_data = {
                 "grid": game_grid.get_grid(),
                 "player_inventory": player.item,
@@ -152,6 +159,7 @@ def handle_client(client_socket, addr, player, game_grid, interactable_grid, tas
     except Exception as e:
         print(f"Error: {e}")
     finally:
+        # update grid to remove player on disconnection
         position = player.get_position()
         game_grid.update_cell(position[1], position[0],'.')
         client_socket.close()
@@ -176,7 +184,6 @@ def main():
     interactable_grid = initialize_interactable_grid(grid_matrix, task_list)
     start_server(game_grid, interactable_grid, task_list, host, port)
        
-    
 
 if __name__ == "__main__":
     main()

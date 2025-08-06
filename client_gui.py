@@ -79,6 +79,7 @@ def network_thread(client_socket):
     global inventory, task_list, task_list_completed
 
     while True:
+        # check for messages to send to server, if none, send a heartbeat to get updated grid data
         try:
             message = key_queue.get_nowait()
             if message == "quit":
@@ -90,20 +91,14 @@ def network_thread(client_socket):
             client_socket.sendall(message.encode())
             response = client_socket.recv(4096).decode()
 
-            
-
+            # unpack response
             grid_data = json.loads(response)['grid']
             inventory = json.loads(response)['player_inventory']
             task_list = json.loads(response)['tasklist']
             task_list_completed = bool(json.loads(response)['tasklist_completed'])
-            # print(json.loads(response)['player_id'])
-            # print(json.loads(response)['player_position'])
-            # print(json.loads(response)['player_direction'])
-            # print(json.loads(response)['player_inventory'])
-            # print(json.loads(response)['player_color'])
 
-            local_grid.grid = grid_data  # Update local grid with server data
-            #print("Server response:", response)
+            # Update local grid with server data
+            local_grid.grid = grid_data
         except:
             break
 
@@ -134,7 +129,7 @@ def start_client_gui():
     keep_popup = True
 
     while running:
-        screen.fill((255, 255, 255))  # White background
+        screen.fill((255, 255, 255))
 
         # === Draw Instructions ===
         font = pygame.font.SysFont('Arial', 20)
@@ -154,6 +149,7 @@ def start_client_gui():
 
         # === Draw Tasklist HUD ===
         if task_list:
+            # separate tasklist items to draw them separately (handle completed tasks)
             tasks_string = task_list.replace("TaskList: ", "")
             tasks = tasks_string.split(", ")
             hud_font = pygame.font.SysFont('Arial', 22, bold=True)
@@ -179,6 +175,7 @@ def start_client_gui():
 
         # === Draw Player Item HUD ===
         if inventory and inventory != "None":
+            # use unpacked respose data to get player item and display in HUD
             hud_font = pygame.font.SysFont('Arial', 20)
             item_text = f"Item: {inventory}   "
             item_surface = hud_font.render(item_text, True, (0, 0, 0))
@@ -217,6 +214,7 @@ def start_client_gui():
                     else:
                         item = player_values[2]
 
+                    # make each player a different color
                     color = get_color(player_values)
                     
                     draw_player(dir,item,screen,rect, color)
@@ -229,11 +227,11 @@ def start_client_gui():
                     else: items = None
                     draw_interactable(cell_object, items, screen,rect, (200,200,200))
                 else:
-                    pygame.draw.rect(screen, (200, 200, 200), rect)  # Empty
+                    pygame.draw.rect(screen, (200, 200, 200), rect)
 
-                pygame.draw.rect(screen, (0, 0, 0), rect, 1)  # Border
+                pygame.draw.rect(screen, (0, 0, 0), rect, 1)
 
-        # === Draw Popup ===
+        # === Draw Recipe Popup ===
         if show_popup:
 
             popup_width = 300
