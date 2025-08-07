@@ -274,7 +274,6 @@ def start_client_gui():
                 "h = b + p + c + l + b",
                 "s = w + r + f",
                 "z = d + t + c + o",
-                "",
                 "Press TAB to close"
             ]
             
