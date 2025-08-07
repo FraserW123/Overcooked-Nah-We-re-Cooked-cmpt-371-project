@@ -28,6 +28,3 @@ python client_gui.py
 ```
 
 Enjoy!
-
-## Contributions:
-<Name(Student #): smth%>
