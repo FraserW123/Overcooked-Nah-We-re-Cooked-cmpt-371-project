@@ -5,7 +5,6 @@ from interactable import initialize_interactable_grid
 import threading
 import json
 import random
-import signal
 from tasklist import TaskList
 
 host = 'localhost'

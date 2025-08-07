@@ -12,7 +12,6 @@
 - Install python
 ```bash
 pip install pygame
-# pip install pynput (idk if we need this actually)
 ```
 
 ## Running the Game

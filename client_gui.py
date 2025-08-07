@@ -11,7 +11,18 @@ import time
 
 def draw_interactable(letter,items,screen,rectangle, bg_color, font = None, item_text_font = None):
     # draw a certain letter on top of a defined rectangle
-    pygame.draw.rect(screen, bg_color, rectangle)
+    wall_color = (50, 50, 50)
+    window_color = (0, 50, 255)
+    assembly_color = (255, 255, 0)
+
+    if letter == "W":
+        pygame.draw.rect(screen, window_color, rectangle)
+    elif letter == "O":
+        pygame.draw.rect(screen, wall_color, rectangle)
+    elif letter =="A":
+        pygame.draw.rect(screen, assembly_color, rectangle)
+    else:
+        pygame.draw.rect(screen, bg_color, rectangle)
     # a font that is 2 pixels smaller than the cell
     inter_font = pygame.font.SysFont(font, CELL_SIZE - 2)
     #a black letter of the given font
@@ -195,7 +206,9 @@ def start_client_gui():
             screen.blit(no_item_surface, item_rect)
 
 
-
+        
+        light_brown = (200, 150, 100)
+        alternate_count = 0
         # === Draw Grid ===
         for row in range(local_grid.height):
             for col in range(local_grid.width):
@@ -225,11 +238,17 @@ def start_client_gui():
                     if len(value)>1:
                         items = value[1:]
                     else: items = None
-                    draw_interactable(cell_object, items, screen,rect, (200,200,200))
+                    draw_interactable(cell_object, items, screen,rect, light_brown)
                 else:
-                    pygame.draw.rect(screen, (200, 200, 200), rect)
-
+                    if alternate_count % 2 == 0:
+                        square_color = (255, 255, 255)  # white for even squares
+                    else:
+                        square_color = (220, 220, 220)  # light gray for odd squares
+                    pygame.draw.rect(screen, square_color, rect)
+                alternate_count += 1
+        
                 pygame.draw.rect(screen, (0, 0, 0), rect, 1)
+            alternate_count += 1
 
         # === Draw Recipe Popup ===
         if show_popup:
