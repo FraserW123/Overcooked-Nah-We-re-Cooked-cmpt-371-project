@@ -2,9 +2,9 @@
 . . . . O O . . . O
 If . . . A O . . . O
 Iw . . . O O . . . O
-Ir . . . . . . . . O
-Id . . . O O . . . W
+Ir . . . . . . . . W
+Id . . . O O . . . O
 It . . . O O . . . O
 Io . . . A O . . . O
 . . . . O O . . . O
-. T Ip G O O T A T O
+. G Ip T O O T A T O

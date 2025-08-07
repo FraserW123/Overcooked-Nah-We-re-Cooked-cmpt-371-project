@@ -7,7 +7,7 @@ import json
 import random
 from tasklist import TaskList
 
-host = 'localhost'
+host = '207.23.175.219'
 port = 53333
 server_running = True
 CLIENT_LIMIT = 4
