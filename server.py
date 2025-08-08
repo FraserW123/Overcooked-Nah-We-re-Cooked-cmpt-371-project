@@ -7,8 +7,8 @@ import json
 import random
 from tasklist import TaskList
 
-host = '207.23.175.219'
-port = 53333
+host = '142.58.11.222'
+port = 53334
 server_running = True
 CLIENT_LIMIT = 4
 GRID_HEIGHT = 10
