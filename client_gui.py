@@ -76,7 +76,7 @@ SCREEN_WIDTH = CELL_SIZE * GRID_WIDTH + 200
 SCREEN_HEIGHT = CELL_SIZE * GRID_HEIGHT + 200
 
 # === NETWORK CONFIG ===
-host = 'localhost'
+DEFAULT_HOST = 'localhost'
 port = 53333
 key_queue = queue.Queue()
 
@@ -118,7 +118,7 @@ def network_thread(client_socket):
     client_socket.close()
 
 # === Pygame Front-End ===
-def start_client_gui():
+def start_client_gui(selected_host):
     global inventory, task_list, task_list_completed
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -127,7 +127,7 @@ def start_client_gui():
 
     # Connect to server
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+    client_socket.connect((selected_host, port))
 
     # Start networking thread
     threading.Thread(target=network_thread, args=(client_socket,), daemon=True).start()
@@ -358,4 +358,12 @@ def get_color(player_values):
     return color
 
 if __name__ == "__main__":
-    start_client_gui()
+    try:
+        choose_host = input("Enter server host (default: localhost): ")
+        if choose_host:
+            choose_host = choose_host.strip().lower()
+        else:
+            choose_host = DEFAULT_HOST
+        start_client_gui(choose_host)
+    except Exception as e:
+        print("IP connection error:", e)

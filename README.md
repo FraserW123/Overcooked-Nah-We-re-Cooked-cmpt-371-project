@@ -3,10 +3,7 @@
 ## Setting up the environment
 
 ### Repository Setup
-- clone the repository
-- open server.py in a text editor and change localhost to device ip-address
-- open client_gui.py in a text editor on the client device and change localhost to the server's ip address
-
+- Download the repository as a zip file and extract the contents to a folder of your choice.
 ### Install dependencies
 #### Windows:
 - Install python
@@ -17,14 +14,21 @@ pip install pygame
 ## Running the Game
 
 ### Start Server
+- Open the project folder in a terminal and run 
 ```bash
-cd CMPT371PROJECT
 python server.py
 ```
+- When prompted:
+    - Enter y to use the device’s IP address, or
+    - Enter n to use localhost (default).
 
 ### Start Client
+- Open the project folder in a terminal and run 
 ```bash
 python client_gui.py
 ```
+- When prompted:
+    - Enter the server IP address, or
+    - Press Enter to use localhost (default).
 
 Enjoy!

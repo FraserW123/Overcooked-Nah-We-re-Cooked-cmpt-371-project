@@ -176,10 +176,30 @@ def create_player_string(player):
     player_str += id
     return player_str
 
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.254.254.254', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+
 def main():
     grid_matrix = get_layout_from_file("grid.txt")
     game_grid = Layout(layout = grid_matrix)
     task_list = TaskList()
+    print(get_ip())
+    choice = input("Do you want to use the IP address of the server? Choosing n defaults to localhost. (y/n) (default: n): ").strip().lower()
+    if choice == 'y':
+        host = get_ip()
+    else:
+        host = 'localhost'
     interactable_grid = initialize_interactable_grid(grid_matrix, task_list)
     start_server(game_grid, interactable_grid, task_list, host, port)
        
