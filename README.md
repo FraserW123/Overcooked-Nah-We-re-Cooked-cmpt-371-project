@@ -3,7 +3,7 @@
 ## Setting up the environment
 
 ### Repository Setup
-- Download the repository as a zip file and unzip it to a folder of your choice
+- Download the repository as a zip file and extract the contents to a folder of your choice.
 ### Install dependencies
 #### Windows:
 - Install python
@@ -14,7 +14,7 @@ pip install pygame
 ## Running the Game
 
 ### Start Server
-- Open the folder in a terminal and run 
+- Open the project folder in a terminal and run 
 ```bash
 python server.py
 ```
@@ -23,7 +23,7 @@ python server.py
     - Enter n to use localhost (default).
 
 ### Start Client
-- Open the folder in a terminal and run 
+- Open the project folder in a terminal and run 
 ```bash
 python client_gui.py
 ```
